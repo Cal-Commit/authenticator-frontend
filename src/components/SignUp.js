@@ -5,15 +5,18 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-import { Link, redirect, useParams, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 import logo from "../static/Cal Commit Logo.svg";
 import { useForm } from "react-hook-form";
 import { fetchApi } from "../utils/fetchApi";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import AuthContext from "../store/AuthContext";
+import LoadingSpinner from "./LoadingSpinner";
 
 export function SignUp() {
+  const [loading, setLoading] = useState(false);
+
   const {
     register,
     handleSubmit,
@@ -24,62 +27,70 @@ export function SignUp() {
 
   const authCtx = useContext(AuthContext);
 
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
 
   const submitHandler = async () => {
-    const { password, confirmPassword } = getValues();
-    if (password !== confirmPassword) {
-      return setError("confirmPassword", {
-        type: "nomatch",
-      });
-    }
-
-    const { fullName, email, termsOfUse } = getValues();
-
-    const response = await fetchApi("/auth/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        fullName,
-        email,
-        password,
-        confirmPassword,
-        termsOfUse,
-      }),
-    });
-
-    const data = await response.json();
-    if (!response.ok) {
-      if (data.message === "Email already exists") {
-        return setError("email", {
-          type: "duplicate",
-        });
-      } else if (data.type === "validation") {
-        const field = data.message.path;
-        console.log(field);
-
-        const msg = data.message.msg;
-        console.log(msg);
-        return setError(field, {
-          type: msg,
+    setLoading(true);
+    setTimeout(async () => {
+      const { password, confirmPassword } = getValues();
+      if (password !== confirmPassword) {
+        setLoading(false);
+        return setError("confirmPassword", {
+          type: "nomatch",
         });
       }
-    }
-    const expirationTime = new Date(new Date().setHours(23, 59, 59, 999));
-    authCtx.login(
-      data.token,
-      expirationTime.toISOString(),
-      data.role,
-      data.fullName
-    );
-    
-    window.location = `${document.referrer}sso-success?durl=${searchParams.get(
-      "durl"
-    )}&token=${data.token}&role=${data.role}&fullName=${data.fullName}&repPts=${
-      data.reputationPoints
-    }&since=${new Date(data.created_at).toDateString()}`;
+
+      const { fullName, email, termsOfUse } = getValues();
+
+      const response = await fetchApi("/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName,
+          email,
+          password,
+          confirmPassword,
+          termsOfUse,
+        }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        setLoading(false);
+        if (data.message === "Email already exists") {
+          return setError("email", {
+            type: "duplicate",
+          });
+        } else if (data.type === "validation") {
+          const field = data.message.path;
+          console.log(field);
+
+          const msg = data.message.msg;
+          console.log(msg);
+          return setError(field, {
+            type: msg,
+          });
+        }
+      }
+      const expirationTime = new Date(new Date().setHours(23, 59, 59, 999));
+      authCtx.login(
+        data.token,
+        expirationTime.toISOString(),
+        data.role,
+        data.fullName
+      );
+      setLoading(false);
+
+      window.location = `${
+        document.referrer
+      }sso-success?durl=${searchParams.get("durl")}&token=${data.token}&role=${
+        data.role
+      }&fullName=${data.fullName}&repPts=${
+        data.reputationPoints
+      }&since=${new Date(data.created_at).toDateString()}`;
+    }, 10000000);
   };
 
   return (
@@ -298,8 +309,13 @@ export function SignUp() {
             type="submit"
             className="transition-all duration-300 ease-in-out mt-6 bg-white border-2 border-calcommit-orange text-black font-dm-sans text-lg py-2 capitalize hover:scale-105 hover:shadow-lg hover:-rotate-6 hover:bg-calcommit-orange hover:text-white"
             fullWidth
+            disabled={loading}
           >
-            Sign Up
+            {loading ? (
+                <LoadingSpinner />
+            ) : (
+              "Sign Up"
+            )}
           </Button>
           <Typography
             color="gray"
