@@ -21,8 +21,6 @@ export function SignIn() {
 
   const authCtx = useContext(AuthContext);
 
-  const [searchParams] = useSearchParams();
-
   const submitHandler = async () => {
     setLoading(true);
     const { email, password } = getValues();
@@ -53,6 +51,17 @@ export function SignIn() {
         });
       }
     }
+    if (data.type === "err") {
+      if (data.message === "invcred") {
+        setLoading(false);
+        setError("email", {
+          type: "invcred",
+        });
+        return setError("password", {
+          type: "invcred",
+        });
+      }
+    }
     const expirationTime = new Date(new Date().setHours(23, 59, 59, 999));
     authCtx.login(
       data.token,
@@ -62,13 +71,13 @@ export function SignIn() {
     );
     setLoading(false);
 
-    window.location = `${localStorage.getItem(
-      "referrer"
-    )}sso-success?durl=${localStorage.getItem("durl")}&token=${data.token}&role=${
-      data.role
-    }&fullName=${data.fullName}&repPts=${
-      data.reputationPoints
-    }&since=${new Date(data.created_at).toDateString()}`;
+    // window.location = `${localStorage.getItem(
+    //   "referrer"
+    // )}sso-success?durl=${localStorage.getItem("durl")}&token=${data.token}&role=${
+    //   data.role
+    // }&fullName=${data.fullName}&repPts=${
+    //   data.reputationPoints
+    // }&since=${new Date(data.created_at).toDateString()}`;
   };
 
   return (
@@ -142,6 +151,12 @@ export function SignIn() {
                   instead.
                 </p>
               )}
+              {errors.email?.type === "invcred" && (
+                <p className="font-dm-sans text-red-600 text-sm">
+                  <span className="font-semibold">Oops!</span> Your email or
+                  password is incorrect. Please try again.
+                </p>
+              )}
             </div>
             <div>
               <Input
@@ -191,6 +206,12 @@ export function SignIn() {
                   <span className="font-semibold">Oops!</span> Please enter a
                   password with at least one uppercase letter, one lowercase
                   letter, one number, and one special character.
+                </p>
+              )}
+              {errors.password?.type === "invcred" && (
+                <p className="font-dm-sans text-red-600 text-sm">
+                  <span className="font-semibold">Oops!</span> Your email or
+                  password is incorrect. Please try again.
                 </p>
               )}
             </div>
