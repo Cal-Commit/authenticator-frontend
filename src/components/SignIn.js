@@ -1,10 +1,4 @@
-import {
-  Card,
-  Input,
-  Checkbox,
-  Button,
-  Typography,
-} from "@material-tailwind/react";
+import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import logo from "../static/Cal Commit Logo.svg";
@@ -14,7 +8,7 @@ import { useContext, useState } from "react";
 import AuthContext from "../store/AuthContext";
 import LoadingSpinner from "./LoadingSpinner";
 
-export function SignUp() {
+export function SignIn() {
   const [loading, setLoading] = useState(false);
 
   const {
@@ -31,43 +25,29 @@ export function SignUp() {
 
   const submitHandler = async () => {
     setLoading(true);
-    const { password, confirmPassword } = getValues();
-    if (password !== confirmPassword) {
-      setLoading(false);
-      return setError("confirmPassword", {
-        type: "nomatch",
-      });
-    }
+    const { email, password } = getValues();
 
-    const { fullName, email, termsOfUse } = getValues();
-
-    const response = await fetchApi("/auth/register", {
+    const response = await fetchApi("/auth/login", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        fullName,
         email,
         password,
-        confirmPassword,
-        termsOfUse,
       }),
     });
 
     const data = await response.json();
     if (!response.ok) {
       setLoading(false);
-      if (data.message === "Email already exists") {
+      if (data.message === "Email doesn't exist") {
         return setError("email", {
-          type: "duplicate",
+          type: "notfound",
         });
       } else if (data.type === "validation") {
         const field = data.message.path;
-        console.log(field);
-
         const msg = data.message.msg;
-        console.log(msg);
         return setError(field, {
           type: msg,
         });
@@ -84,9 +64,9 @@ export function SignUp() {
 
     window.location = `${localStorage.getItem(
       "referrer"
-    )}sso-success?durl=${localStorage.getItem("durl")}&token=${
-      data.token
-    }&role=${data.role}&fullName=${data.fullName}&repPts=${
+    )}sso-success?durl=${localStorage.getItem("durl")}&token=${data.token}&role=${
+      data.role
+    }&fullName=${data.fullName}&repPts=${
       data.reputationPoints
     }&since=${new Date(data.created_at).toDateString()}`;
   };
@@ -109,50 +89,17 @@ export function SignUp() {
             variant="h4"
             className="font-dela-gothic text-3xl text-black text-center"
           >
-            Sign Up
-          </Typography>
-          <Typography
-            variant="h6"
-            className="text-xl text-center font-dela-gothic text-gray-900"
-          >
-            for Cal Commit
+            Sign In
           </Typography>
         </div>
         <Typography className="mt-1 font-dm-sans font-bold text-center text-gray-700">
-          Enter your details to register.
+          Enter your details to sign into Cal Commit.
         </Typography>
         <form
           className="mt-8 mb-2 w-80 max-w-screen-lg sm:w-96 font-dm-sans font-normal"
           onSubmit={handleSubmit(submitHandler)}
         >
           <div className="mb-4 flex flex-col gap-6">
-            <div>
-              <Input
-                size="lg"
-                label="Full Name"
-                className="font-dm-sans text-md caret-calcommit-orange"
-                {...register("fullName", { required: true, minLength: 3 })}
-                error={
-                  errors.fullName?.type === "required"
-                    ? true
-                    : false || errors.fullName?.type === "minLength"
-                    ? true
-                    : false
-                }
-              />
-              {errors.fullName?.type === "required" && (
-                <p className="font-dm-sans text-red-600 text-sm">
-                  <span className="font-semibold">Oops!</span> Please enter your
-                  full name.
-                </p>
-              )}
-              {errors.fullName?.type === "minLength" && (
-                <p className="font-dm-sans text-red-600 text-sm">
-                  <span className="font-semibold">Oops!</span> Please enter a
-                  name with at least 3 characters.
-                </p>
-              )}
-            </div>
             <div>
               <Input
                 size="lg"
@@ -182,15 +129,15 @@ export function SignUp() {
                   valid email address.
                 </p>
               )}
-              {errors.email?.type === "duplicate" && (
+              {errors.email?.type === "notfound" && (
                 <p className="font-dm-sans text-red-600 text-sm">
-                  <span className="font-semibold">Oops!</span> Looks like this
-                  email address is already in use. Try{" "}
+                  <span className="font-semibold">Oops!</span> We couldn't find
+                  an account with this email address. Try{" "}
                   <Link
-                    to="/signin"
+                    to="/signup"
                     className="transition-all duration-300 ease-in-out text-red-600 font-semibold underline hover:text-red-900 hover:decoration-double"
                   >
-                    signing in
+                    signing up
                   </Link>{" "}
                   instead.
                 </p>
@@ -247,61 +194,6 @@ export function SignUp() {
                 </p>
               )}
             </div>
-            <div>
-              <Input
-                type="password"
-                size="lg"
-                label="Confirm Password"
-                className="font-dm-sans text-md caret-calcommit-orange"
-                {...register("confirmPassword", { required: true })}
-                error={
-                  errors.confirmPassword?.type === "required"
-                    ? true
-                    : false || errors.confirmPassword?.type === "nomatch"
-                    ? true
-                    : false
-                }
-              />
-              {errors.confirmPassword?.type === "required" && (
-                <p className="font-dm-sans text-red-600 text-sm">
-                  <span className="font-semibold">Oops!</span> Please confirm
-                  your password.
-                </p>
-              )}
-              {errors.confirmPassword?.type === "nomatch" && (
-                <p className="font-dm-sans text-red-600 text-sm">
-                  <span className="font-semibold">Oops!</span> Looks like your
-                  passwords don't match.
-                </p>
-              )}
-            </div>
-          </div>
-          <div>
-            <Checkbox
-              label={
-                <Typography
-                  variant="small"
-                  color="gray"
-                  className="flex items-center font-dm-sans font-normal"
-                >
-                  I agree to the&nbsp;
-                  <Link
-                    to="/terms-of-use"
-                    className="font-dm-sans font-semibold underline transition-all text-light-blue-700 duration-300 ease-in-out hover:text-light-blue-900 hover:decoration-double"
-                  >
-                    Terms of Use
-                  </Link>
-                </Typography>
-              }
-              containerProps={{ className: "-ml-2.5" }}
-              {...register("termsOfUse", { required: true })}
-            />
-            {errors.termsOfUse?.type === "required" && (
-              <p className="font-dm-sans text-red-600 text-sm">
-                <span className="font-semibold">Oops!</span> Please agree to the
-                Terms of Use.
-              </p>
-            )}
           </div>
           <Button
             type="submit"
@@ -309,18 +201,18 @@ export function SignUp() {
             fullWidth
             disabled={loading}
           >
-            {loading ? <LoadingSpinner /> : "Sign Up"}
+            {loading ? <LoadingSpinner /> : "Sign In"}
           </Button>
           <Typography
             color="gray"
             className="mt-4 text-center font-dm-sans font-normal"
           >
-            Already have an account?{" "}
+            Don't have an account?{" "}
             <Link
-              to="/signin"
+              to="/signup"
               className="transition-all duration-300 ease-in-out font-semibold text-light-blue-700 underline hover:text-light-blue-900 hover:decoration-double"
             >
-              Sign In
+              Sign Up
             </Link>
           </Typography>
         </form>

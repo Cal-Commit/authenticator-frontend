@@ -24,7 +24,7 @@ const loadingPhrases = [
   "Crafting Excellence...",
 ];
 
-function LoadingSpinner() {
+function LoadingSpinner({ textSize="text-md", textWeight="font-normal" }) {
   const [msg, setMsg] = useState(loadingPhrases[0]);
 
   useEffect(() => {
@@ -36,9 +36,9 @@ function LoadingSpinner() {
   }, []);
 
   return (
-    <div className="flex items-center justify-center">
-      <Spinner color="deep-orange" className="text-transparent mr-1" />
-      {msg}
+    <div className="flex items-center justify-center font-dm-sans">
+      <Spinner color="deep-orange" className="text-transparent mr-2" />
+      <span className={`${textSize} ${textWeight}`}>{msg}</span>
     </div>
   );
 }
