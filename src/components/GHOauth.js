@@ -15,7 +15,7 @@ function GHOauth() {
     const fetchAccessToken = async () => {
       const code = searchParams.get("code");
 
-      const response = await fetchApi("/auth/oauth-github", {
+      const response = await fetchApi("/oauth/oauth-github", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -49,7 +49,7 @@ function GHOauth() {
       }
       const email = data[0].email;
 
-      const response2 = await fetchApi("/auth/oauth-gh-check", {
+      const response2 = await fetchApi("/oauth/oauth-gh-check", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -71,7 +71,7 @@ function GHOauth() {
         });
       }
 
-      const response3 = await fetchApi("/auth/authenticate-gh", {
+      const response3 = await fetchApi("/oauth/authenticate-gh", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
