@@ -82,9 +82,11 @@ export function SignUp() {
     );
     setLoading(false);
 
-    window.location = `${document.referrer}sso-success?durl=${searchParams.get(
-      "durl"
-    )}&token=${data.token}&role=${data.role}&fullName=${data.fullName}&repPts=${
+    window.location = `${localStorage.getItem(
+      "referrer"
+    )}sso-success?durl=${localStorage.getItem("durl")}&token=${
+      data.token
+    }&role=${data.role}&fullName=${data.fullName}&repPts=${
       data.reputationPoints
     }&since=${new Date(data.created_at).toDateString()}`;
   };
