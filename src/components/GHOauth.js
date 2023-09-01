@@ -2,6 +2,7 @@ import React, { useContext, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { fetchApi } from "../utils/fetchApi";
 import AuthContext from "../store/AuthContext";
+import LoadingSpinner from "./LoadingSpinner";
 
 function GHOauth() {
   const [searchParams] = useSearchParams();
@@ -65,7 +66,7 @@ function GHOauth() {
       }
 
       if (!data2.userExists) {
-        return navigate(`/auth/gh-info`, {
+        return navigate(`/oauth/github/step-2`, {
           state: { email },
         });
       }
@@ -86,8 +87,6 @@ function GHOauth() {
         return console.log(data3.message);
       }
 
-      console.log(data3);
-
       const expirationTime = new Date(new Date().setHours(23, 59, 59, 999));
       authCtx.login(
         data3.token,
@@ -105,7 +104,11 @@ function GHOauth() {
       }&since=${new Date(data3.created_at).toDateString()}`;
     });
   }, []);
-  return <div>Doing something</div>;
+  return (
+    <div className="flex w-full h-full justify-center items-center bg-[#CFE8EF]">
+      <LoadingSpinner textSize="text-xl" textWeight="font-bold" />
+    </div>
+  );
 }
 
 export default GHOauth;

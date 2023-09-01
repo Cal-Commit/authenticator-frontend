@@ -45,13 +45,13 @@ function Landing() {
         </div>
         <div className="grid grid-cols-2 gap-x-3 mt-3">
           <Link
-            to="/signup"
+            to="/auth/signup"
             className="transition-all text-center shadow-lg duration-300 ease-in-out rounded-xl bg-calcommit-orange text-white font-bold text-lg px-2 py-3 font-dm-sans border-2 border-calcommit-orange hover:scale-105 hover:-rotate-12 hover:bg-white hover:text-black"
           >
             Sign Up with Cal Commit
           </Link>
           <Link
-            to="/signin"
+            to="/auth/signin"
             className="transition-all text-center shadow-lg duration-300 ease-in-out rounded-xl bg-white text-black font-bold text-lg px-2 py-3 font-dm-sans border-2 border-calcommit-orange hover:scale-105 hover:rotate-12 hover:bg-calcommit-orange hover:text-white"
           >
             Sign in with Cal Commit

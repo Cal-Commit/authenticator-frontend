@@ -1,7 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { SignUp } from "./components/SignUp";
 import { SignIn } from "./components/SignIn";
-import GithubInitiator from "./components/GithubInitiator";
 import GHOauth from "./components/GHOauth";
 import GHAdditionalInfo from "./components/GHAdditionalInfo";
 import Landing from "./components/Landing";
@@ -12,11 +11,10 @@ function App() {
       <div className="w-full h-screen bg-gradient-to-b from-deep-orange-50 via-deep-orange-100/60 to-deep-orange-50">
         <Routes>
           <Route path="/" element={<Landing />} />
-          <Route path="/signup" element={<SignUp />} />
-          <Route path="/signin" element={<SignIn />} />
-          <Route path="/github" element={<GithubInitiator />} />
-          <Route path="/oauth-gh" element={<GHOauth />} />
-          <Route path="/auth/gh-info" element={<GHAdditionalInfo />} />
+          <Route path="/auth/signup" element={<SignUp />} />
+          <Route path="/auth/signin" element={<SignIn />} />
+          <Route path="/oauth/github" element={<GHOauth />} />
+          <Route path="/oauth/github/step-2" element={<GHAdditionalInfo />} />
         </Routes>
       </div>
     </>
