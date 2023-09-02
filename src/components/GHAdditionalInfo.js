@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Link, useLocation, useSearchParams } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import AuthContext from "../store/AuthContext";
 import { useForm } from "react-hook-form";
 import { fetchApi } from "../utils/fetchApi";
@@ -13,21 +13,21 @@ import {
 
 import logo from "../static/Cal Commit Logo.svg";
 import LoadingSpinner from "./LoadingSpinner";
+import { manageSuccess } from "../utils/manageSuccess";
 
 function GHAdditionalInfo() {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState(null);
   const location = useLocation();
 
-  const [searchParams] = useSearchParams();
-
   const {
     register,
     handleSubmit,
     formState: { errors },
     getValues,
-    setError,
   } = useForm();
+
+  const navigate = useNavigate();
 
   const authCtx = useContext(AuthContext);
 
@@ -73,13 +73,7 @@ function GHAdditionalInfo() {
     );
     setLoading(false);
 
-    window.location = `${localStorage.getItem(
-      "referrer"
-    )}sso-success?durl=${localStorage.getItem("durl")}&token=${
-      data.token
-    }&role=${data.role}&fullName=${data.fullName}&repPts=${
-      data.reputationPoints
-    }&since=${new Date(data.created_at).toDateString()}`;
+    return manageSuccess(window, localStorage, data, navigate);
   };
 
   return (

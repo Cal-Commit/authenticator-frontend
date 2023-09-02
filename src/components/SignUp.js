@@ -5,7 +5,7 @@ import {
   Button,
   Typography,
 } from "@material-tailwind/react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import logo from "../static/Cal Commit Logo.svg";
 import { useForm } from "react-hook-form";
@@ -13,6 +13,7 @@ import { fetchApi } from "../utils/fetchApi";
 import { useContext, useState } from "react";
 import AuthContext from "../store/AuthContext";
 import LoadingSpinner from "./LoadingSpinner";
+import { manageSuccess } from "../utils/manageSuccess";
 
 export function SignUp() {
   const [loading, setLoading] = useState(false);
@@ -25,9 +26,9 @@ export function SignUp() {
     setError,
   } = useForm();
 
-  const authCtx = useContext(AuthContext);
+  const navigate = useNavigate();
 
-  const [searchParams] = useSearchParams();
+  const authCtx = useContext(AuthContext);
 
   const submitHandler = async () => {
     setLoading(true);
@@ -64,10 +65,8 @@ export function SignUp() {
         });
       } else if (data.type === "validation") {
         const field = data.message.path;
-        console.log(field);
 
         const msg = data.message.msg;
-        console.log(msg);
         return setError(field, {
           type: msg,
         });
@@ -82,13 +81,7 @@ export function SignUp() {
     );
     setLoading(false);
 
-    window.location = `${localStorage.getItem(
-      "referrer"
-    )}sso-success?durl=${localStorage.getItem("durl")}&token=${
-      data.token
-    }&role=${data.role}&fullName=${data.fullName}&repPts=${
-      data.reputationPoints
-    }&since=${new Date(data.created_at).toDateString()}`;
+    return manageSuccess(window, localStorage, data, navigate);
   };
 
   return (
