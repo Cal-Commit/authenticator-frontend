@@ -4,6 +4,7 @@ import { SignIn } from "./components/SignIn";
 import GHOauth from "./components/GHOauth";
 import GHAdditionalInfo from "./components/GHAdditionalInfo";
 import Landing from "./components/Landing";
+import { Redirects } from "./components/Redirects";
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/auth/signin" element={<SignIn />} />
           <Route path="/oauth/github" element={<GHOauth />} />
           <Route path="/oauth/github/step-2" element={<GHAdditionalInfo />} />
+          <Route path="redirects" element={<Redirects />} />
         </Routes>
       </div>
     </>

@@ -11,7 +11,7 @@ function Landing() {
   useEffect(() => {
     localStorage.setItem("referrer", document.referrer);
     localStorage.setItem("durl", searchParams.get("durl"));
-  }, []);
+  }, [searchParams]);
 
   return (
     <div className="overflow-y-hidden h-full w-full bg-[#5B7C99]">
