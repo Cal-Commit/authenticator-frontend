@@ -41,7 +41,7 @@ export function Redirects() {
 
   return (
     <div className="flex flex-col items-center w-full h-full bg-[#a8dadc]">
-      <Typography className="text-3xl font-dela-gothic mt-5 text-[#e63946]">
+      <Typography className="text-3xl font-dela-gothic mt-5 text-[#4a4e69]">
         Where do you want to go?
       </Typography>
       <Card className="mt-5 h-fit w-1/2 overflow-scroll">
