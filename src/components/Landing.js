@@ -1,17 +1,62 @@
 import { Card, Typography } from "@material-tailwind/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 
 import gh from "../static/GithubLogo-light.svg";
 import logo from "../static/Cal Commit Logo.svg";
 
+const phrases = [
+  "Open Source: Where Innovation Meets Collaboration.",
+  "Code Together, Grow Together.",
+  "Empowering Developers, One Line of Code at a Time.",
+  "In the World of Open Source, Knowledge is the Ultimate Currency.",
+  "Join the Open Source Revolution - Contribute and Create.",
+  "Coding Freedom: It Starts with Open Source.",
+  "Our Code, Our Community, Our Future.",
+  "Unleash Your Creativity with Open Source Solutions.",
+  "Open Source: Where Dreams Become Pull Requests.",
+  "Building Better Software, Building a Better World.",
+  "Open Source Bridges Gaps, Connects Minds.",
+  "Discover, Share, Collaborate - The Essence of Open Source.",
+  "Code is Our Language, Open Source is Our Culture.",
+  "Embrace Open Source - The Heartbeat of Tech Innovation.",
+  "Together We Code, Together We Conquer.",
+  "Open Source: Fueling the Future of Technology.",
+  "Contributing Code, Creating Change.",
+  "Collaboration Unlocks the Power of Open Source.",
+  "Empowerment Through Code Sharing.",
+  "Innovation Thrives in the Open Source Ecosystem.",
+  "Code, Learn, Share - The Open Source Way.",
+  "Join the Open Source Movement - Make Your Mark.",
+  "Open Source: Where Bugs Become Features.",
+  "Dive into Open Source, Dive into Possibilities.",
+  "Code for Good, Code for All.",
+  "Open Source: Shaping Tomorrow's Solutions Today.",
+  "Coding Beyond Borders with Open Source.",
+  "Community-Driven Code, Community-Driven Success.",
+  "Open Source: The Heart and Soul of Software Development.",
+  "Explore, Code, Inspire - Open Source Adventure Awaits."
+];
+
+
 function Landing() {
+  const [phrase, setPhrase] = useState(
+    Math.floor(Math.random() * phrases.length)
+  );
   const [searchParams] = useSearchParams();
 
   useEffect(() => {
     localStorage.setItem("referrer", document.referrer);
     localStorage.setItem("durl", searchParams.get("durl"));
   }, [searchParams]);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setPhrase(Math.floor(Math.random() * phrases.length));
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="overflow-y-hidden h-full w-full bg-[#5B7C99]">
@@ -25,7 +70,7 @@ function Landing() {
             alt="Cal Commit"
             className="w-28 border-4 border-calcommit-orange bg-white rounded-full"
           />
-          <Typography className="font-dela-gothic text-4xl ml-3 text-white">
+          <Typography className="font-dela-gothic text-4xl ml-3 text-white mr-2">
             Cal Commit
           </Typography>
         </div>
@@ -57,6 +102,9 @@ function Landing() {
             Sign in with Cal Commit
           </Link>
         </div>
+        <Typography className="absolute bottom-5 text-[#E1E5F2] text-lg font-dm-sans font-semibold">
+          {phrases[phrase]}
+        </Typography>
       </Card>
     </div>
   );
