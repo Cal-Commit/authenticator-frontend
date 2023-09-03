@@ -62,7 +62,7 @@ function Landing() {
   useEffect(() => {
     const interval = setInterval(() => {
       setPhrase(Math.floor(Math.random() * phrases.length));
-    }, 3000);
+    }, 5000);
 
     return () => clearInterval(interval);
   }, []);
