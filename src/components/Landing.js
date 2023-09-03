@@ -1,9 +1,15 @@
-import { Card, Typography } from "@material-tailwind/react";
-import React, { useEffect, useState } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Button, Card, Typography } from "@material-tailwind/react";
+import React, { useContext, useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 
 import gh from "../static/GithubLogo-light.svg";
 import logo from "../static/Cal Commit Logo.svg";
+import goog from "../static/GoogleLogo.svg";
+
+import { useGoogleLogin } from "@react-oauth/google";
+import { fetchApi } from "../utils/fetchApi";
+import AuthContext from "../store/AuthContext";
+import { manageSuccess } from "../utils/manageSuccess";
 
 const phrases = [
   "Open Source: Where Innovation Meets Collaboration.",
@@ -35,15 +41,18 @@ const phrases = [
   "Coding Beyond Borders with Open Source.",
   "Community-Driven Code, Community-Driven Success.",
   "Open Source: The Heart and Soul of Software Development.",
-  "Explore, Code, Inspire - Open Source Adventure Awaits."
+  "Explore, Code, Inspire - Open Source Adventure Awaits.",
 ];
-
 
 function Landing() {
   const [phrase, setPhrase] = useState(
     Math.floor(Math.random() * phrases.length)
   );
   const [searchParams] = useSearchParams();
+
+  const authCtx = useContext(AuthContext);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     localStorage.setItem("referrer", document.referrer);
@@ -57,6 +66,43 @@ function Landing() {
 
     return () => clearInterval(interval);
   }, []);
+
+  const googleLogin = useGoogleLogin({
+    onSuccess: async (tokenResponse) => {
+      const response = await fetch(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        {
+          method: "GET",
+          headers: { Authorization: `Bearer ${tokenResponse.access_token}` },
+        }
+      );
+
+      const userInfo = await response.json();
+
+      const response2 = await fetchApi("/oauth/authenticate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: userInfo.email,
+          fullName: userInfo.name,
+        }),
+      });
+
+      const data = await response2.json();
+
+      const expirationTime = new Date(new Date().setHours(23, 59, 59, 999));
+      authCtx.login(
+        data.token,
+        expirationTime.toISOString(),
+        data.role,
+        data.fullName
+      );
+
+      return manageSuccess(window, localStorage, data, navigate);
+    },
+  });
 
   return (
     <div className="overflow-y-hidden h-full w-full bg-[#5B7C99]">
@@ -74,14 +120,21 @@ function Landing() {
             Cal Commit
           </Typography>
         </div>
-        <div className="grid">
+        <div className="grid grid-cols-2 gap-x-3 items-center">
           <a
             href={`https://github.com/login/oauth/authorize?scope=user&client_id=${process.env.REACT_APP_GH_CLIENT_ID}&redirect_uri=${process.env.REACT_APP_GH_REDIRECT_URI}`}
-            className="transition-all duration-300 ease-in-out flex items-center bg-black rounded-xl text-white py-3 px-2 shadow-sm hover:scale-105 hover:shadow-lg"
+            className="transition-all duration-300 ease-in-out flex items-center font-dm-sans text-center bg-black rounded-xl text-white py-3 px-2 shadow-sm hover:scale-105 hover:shadow-lg"
           >
             <img src={gh} className="h-7 w-7 mr-2" alt="Github" /> Sign in with
             Github
           </a>
+          <Button
+            onClick={googleLogin}
+            className="capitalize border-4 border-t-[#4285F4] text-center font-dm-sans border-r-[#0F9D58] border-b-[#F4B400] border-l-[#DB4437] text-md font-normal transition-all duration-300 ease-in-out flex items-center bg-white rounded-xl text-black py-2.5 px-2 shadow-sm hover:scale-105 hover:shadow-lg"
+          >
+            <img src={goog} className="h-7 w-7 mr-2" alt="Github" />
+            Sign in With Google
+          </Button>
         </div>
         <div className="flex items-center justify-center mt-4 w-full">
           <div className="h-px bg-gray-300 w-56"></div>

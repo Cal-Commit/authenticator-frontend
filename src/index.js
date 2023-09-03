@@ -5,6 +5,7 @@ import App from "./App";
 import { ThemeProvider } from "@material-tailwind/react";
 import { BrowserRouter } from "react-router-dom";
 import { AuthContextProvider } from "./store/AuthContext";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
@@ -12,7 +13,11 @@ root.render(
     <ThemeProvider>
       <BrowserRouter>
         <AuthContextProvider>
-          <App />
+          <GoogleOAuthProvider
+            clientId={process.env.REACT_APP_GOOGLE_CLIENT_ID}
+          >
+            <App />
+          </GoogleOAuthProvider>
         </AuthContextProvider>
       </BrowserRouter>
     </ThemeProvider>
