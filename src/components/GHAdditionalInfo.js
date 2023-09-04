@@ -46,7 +46,7 @@ function GHAdditionalInfo() {
       return;
     }
 
-    const response = await fetchApi("/oauth/authenticate", {
+    const response = await fetchApi("/oauth/authenticate-gh", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
