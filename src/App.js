@@ -16,7 +16,7 @@ function App() {
           <Route path="/auth/signin" element={<SignIn />} />
           <Route path="/oauth/github" element={<GHOauth />} />
           <Route path="/oauth/github/step-2" element={<GHAdditionalInfo />} />
-          <Route path="redirects" element={<Redirects />} />
+          <Route path="/redirects" element={<Redirects />} />
         </Routes>
       </div>
     </>
