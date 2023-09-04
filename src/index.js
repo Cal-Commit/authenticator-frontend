@@ -10,7 +10,11 @@ const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <ThemeProvider>
-      <BrowserRouter>
+      <BrowserRouter
+        future={{
+          v7_startTransition: true,
+        }}
+      >
         <AuthContextProvider>
           <App />
         </AuthContextProvider>
