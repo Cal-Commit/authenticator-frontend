@@ -70,7 +70,7 @@ function GHOauth() {
         });
       }
 
-      const response3 = await fetchApi("/oauth/authenticate", {
+      const response3 = await fetchApi("/oauth/authenticate-gh", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
